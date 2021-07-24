@@ -11,10 +11,15 @@ class Snake:
     tails = []
 
     size = 1
-    block = constains.CELL_SIZE
 
     momentumX = 0
     momentumY = 0
+
+    hasHitWall = False
+    hasHitTail = False
+    hasHitApple = False
+
+    hasDead = False
 
     def __init__(self):
         self.headX = 0
@@ -26,10 +31,19 @@ class Snake:
       # It means we have exactly 1000/50 = 200 positions to place the snake at
       # => The same to height as well
 
-        self.headX = random.randrange(
-            0, constains.BOARD_SIZE_WIDTH / constains.CELL_SIZE) * constains.CELL_SIZE
-        self.headY = random.randrange(
-            0, constains.BOARD_SIZE_HEIGHT / constains.CELL_SIZE) * constains.CELL_SIZE
+        self.headX = random.randrange(0, constains.NORMALIZED_WIDTH)
+        self.headY = random.randrange(0, constains.NORMALIZED_HEIGHT)
+
+    def updateState(self, foodX, foodY):
+        self.hasHitWall = self.hitTheWals()
+        self.hasHitTail = self.hitItself()
+        self.hasHitApple = self.hitTheFood(foodX, foodY)
+
+        self.hasDead = self.hasHitWall or self.hasHitTail
+      
+        if self.hasHitApple:
+            self.increaseSize()
+
 
     def move(self):
 
@@ -62,17 +76,17 @@ class Snake:
 
         # self.move()
 
-    def moveLeft(self):
-        self.changeDirection(-self.block, 0)
+    # def moveLeft(self):
+    #     self.changeDirection(-self.block, 0)
 
-    def moveRight(self):
-        self.changeDirection(self.block, 0)
+    # def moveRight(self):
+    #     self.changeDirection(self.block, 0)
 
-    def moveUp(self):
-        self.changeDirection(0, -self.block)
+    # def moveUp(self):
+    #     self.changeDirection(0, -self.block)
 
-    def moveDown(self):
-        self.changeDirection(0, self.block)
+    # def moveDown(self):
+    #     self.changeDirection(0, self.block)
 
     def increaseSize(self):
         self.size += 1
@@ -89,7 +103,7 @@ class Snake:
     def hitTheWals(self):
         # Break the flow to have a better performance
 
-        hitRightWall = self.headX >= constains.BOARD_SIZE_WIDTH
+        hitRightWall = self.headX >= constains.NORMALIZED_WIDTH
         if(hitRightWall):
             return True
 
@@ -97,7 +111,7 @@ class Snake:
         if(hitLeftWall):
             return True
 
-        hitTopWall = self.headY >= constains.BOARD_SIZE_HEIGHT
+        hitTopWall = self.headY >= constains.NORMALIZED_HEIGHT
         if(hitTopWall):
             return True
 
@@ -117,7 +131,9 @@ class Snake:
         return False
 
 
-def drawSnake(display, snakeBlock, snakes):
+def drawSnake(display, snakes):
     for snake in snakes:
         pg.draw.rect(display, constains.SNAKE_COLOR, [
-                     snake[0], snake[1], snakeBlock, snakeBlock])
+                     snake[0]*constains.CELL_SIZE, snake[1] *
+                     constains.CELL_SIZE,
+                     constains.CELL_SIZE, constains.CELL_SIZE])

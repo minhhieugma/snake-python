@@ -7,6 +7,6 @@ class Food:
 
   # def __init__(self):
 
-  def randomPosition(self, snakeBlock):
-    self.x  = round(random.randrange(0, constains.BOARD_SIZE_WIDTH - constains.CELL_SIZE) / constains.CELL_SIZE) * constains.CELL_SIZE
-    self.y = round(random.randrange(0, constains.BOARD_SIZE_HEIGHT - constains.CELL_SIZE) / constains.CELL_SIZE) * constains.CELL_SIZE
+  def randomPosition(self):
+    self.x = random.randrange(0, constains.NORMALIZED_WIDTH)
+    self.y = random.randrange(0, constains.NORMALIZED_HEIGHT)
