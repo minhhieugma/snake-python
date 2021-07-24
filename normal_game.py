@@ -19,10 +19,8 @@ def normalGame():
     snake = s.Snake()
     snake.randomPosition()
 
-    food = f.Food(0, 0)
+    food = f.Food()
     food.randomPosition(snake.block)
-
-    snakeHeadAndTails = []
 
     isExiting = False
     isDead = False
@@ -45,35 +43,28 @@ def normalGame():
 
         snake.move()
 
-        isDead = game_rule.hitTheWals(snake.x, snake.y)
+        isDead = snake.hitTheWals()
 
-        board.fill((111, 111, 111))
-        pg.draw.rect(board, (0, 255, 0), [
-                         food.x, food.y, snake.block, snake.block])
+        board.fill(constains.BOARD_COLOR)
+        pg.draw.rect(board, constains.FOOD_COLOR, [
+                         food.x, food.y, 
+                         constains.CELL_SIZE, constains.CELL_SIZE])
 
-        snake_Head = []
-        snake_Head.append(snake.x)
-        snake_Head.append(snake.y)
-        snakeHeadAndTails.append(snake_Head)
+        isDead = isDead or snake.hitItself()
 
-        # While the snake is moving, we remove the last tail and add the head
-        if len(snakeHeadAndTails) > snake.size:
-            del snakeHeadAndTails[0]
-
-        isDead = game_rule.isDead(snakeHeadAndTails, snake_Head)
-
-        s.drawSnake(board, snake.block, snakeHeadAndTails)
+        s.drawSnake(board, snake.block, [[snake.headX, snake.headY], *snake.tails])
+        # s.drawSnake(board, snake.block, snake.tails)
         game_rule.drawScore(board, snake.size - 1)
 
         pg.display.update()
 
-        if game_rule.hitTheFood(snake.x, snake.y, food.x, food.y):
+        if snake.hitTheFood(food.x, food.y):
             food.randomPosition(food)
 
             snake.increaseSize()
 
         while isDead == True:
-            board.fill(255, 255, 255)
+            board.fill((255, 255, 255))
 
             utils.drawText(
                 board, "Game over! Quit -> Q or give a Retry -> R", (213, 50, 80))
