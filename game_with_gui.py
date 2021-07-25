@@ -11,42 +11,14 @@ pg.display.set_caption('Code for food team')
 
 clock = pg.time.Clock()
 
-
-def handleKeyboardEvent(key):
-
-    if key == pg.K_LEFT:
-        return (-1, 0)
-    if key == pg.K_RIGHT:
-        return (1, 0)
-    if key == pg.K_UP:
-        return (0, -1)
-    if key == pg.K_DOWN:
-        return (0, 1)
-
-    return (0, 0)
-
-def drawScore(display, score):
-    text = pg.font.SysFont("arial", 20).render(
-        f"Eaten: {score}", True, (255, 128, 128))
-
-    display.blit(text, [15, 15])
-
-def drawSnake(display, snakes):
-    for snake in snakes:
-        pg.draw.rect(display, constains.SNAKE_COLOR, [
-                     snake[0]*constains.CELL_SIZE, snake[1] *
-                     constains.CELL_SIZE,
-                     constains.CELL_SIZE, constains.CELL_SIZE])
-
-
 def normalGame():
 
     game = Game()
     game.init()
 
     isExiting = False
+    nextMove = (0, 0, 0, 0)
     while isExiting == False:
-        nextMove = (0, 0)
 
         # This the scope of normal game
         for event in pg.event.get():
@@ -63,7 +35,8 @@ def normalGame():
                 print(nextMove)
                 break
 
-        game.move([nextMove[0], nextMove[1], 0])
+        game.move(nextMove)
+        # print(nextMove)
 
         board.fill(constains.BOARD_COLOR)
         pg.draw.rect(board, constains.FOOD_COLOR, [
@@ -76,7 +49,7 @@ def normalGame():
         pg.display.update()
 
         while game.snake.hasDead == True:
-            board.fill((255, 255, 255))
+            board.fill(constains.BOARD_COLOR_DEAD)
 
             utils.drawText(
                 board, "Game over! Quit -> Q or give a Retry -> R", (213, 50, 80))
@@ -91,6 +64,7 @@ def normalGame():
                 if event.key == pg.K_q:
                     isExiting = True
                 elif event.key == pg.K_r:
+                    nextMove = (0, 0, 0, 0)
                     game.init()
 
         clock.tick(constains.GAME_PFS)
@@ -98,6 +72,35 @@ def normalGame():
     pg.quit()
 
     quit()
+
+
+def handleKeyboardEvent(key):
+    # LEFT RIGHT UP DOWN
+
+    if key == pg.K_LEFT:
+        return (1, 0, 0, 0)
+    if key == pg.K_RIGHT:
+        return (0, 1, 0, 0)
+    if key == pg.K_UP:
+        return (0, 0, 1, 0)
+    if key == pg.K_DOWN:
+        return (0, 0, 0, 1)
+
+    return (0, 0, 0, 0)
+
+def drawScore(display, score):
+    text = pg.font.SysFont("arial", 20).render(
+        f"Eaten: {score}", True, (255, 128, 128))
+
+    display.blit(text, [15, 15])
+
+def drawSnake(display, snakes):
+    for snake in snakes:
+        pg.draw.rect(display, constains.SNAKE_COLOR, [
+                     snake[0]*constains.CELL_SIZE, snake[1] *
+                     constains.CELL_SIZE,
+                     constains.CELL_SIZE, constains.CELL_SIZE])
+
 
 
 normalGame()

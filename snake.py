@@ -1,6 +1,7 @@
 import random
+from tkinter import LEFT, RIGHT
 import constains
-
+# from models.direction import Direction
 
 class Snake:
     headX = 0
@@ -9,8 +10,7 @@ class Snake:
 
     size = 1
 
-    momentumX = 0
-    momentumY = 0
+    direction = [0,0,0,0]
 
     hasHitWall = False
     hasHitTail = False
@@ -26,8 +26,7 @@ class Snake:
         self.size = 1
         self.tails = []
 
-        self.momentumX = 0
-        self.momentumY = 0
+        self.direction = [0,0,0,0]
 
         self.hasDead = False
         self.hasHitApple = False
@@ -53,10 +52,20 @@ class Snake:
         if self.hasHitApple:
             self.increaseSize()
 
-    def move(self):
+    def move(self, newDirection, foodX, foodY):
+        # Snake cannot turn 180 degree, from left to right or from right to left
+        invalidMove = self.direction[constains.LEFT] + newDirection[constains.RIGHT] == 2 or self.direction[constains.RIGHT] + newDirection[constains.LEFT] == 2
+        # Snake cannot turn 180 degree, from up to down or from down to to
+        invalidMove = invalidMove or self.direction[constains.UP] + newDirection[constains.DOWN] == 2 or self.direction[constains.DOWN] + newDirection[constains.UP] == 2
+        
+        if invalidMove == False:
+            # print('Valid move')
+            print(newDirection)
+            self.direction = [*newDirection]
+            
 
-        self.headX += self.momentumX
-        self.headY += self.momentumY
+        self.headX += self.direction[constains.LEFT] * -1 + self.direction[constains.RIGHT]
+        self.headY += self.direction[constains.UP] * -1 + self.direction[constains.DOWN] 
 
         snakeHead = [self.headX, self.headY]
         self.tails.append(snakeHead)
@@ -65,36 +74,7 @@ class Snake:
         if len(self.tails) > self.size:
             del self.tails[0]
 
-    def changeDirection(self, stepX, stepY):
-
-        if self.momentumX == stepX and self.momentumY == stepY:
-            # No change couse of moves
-            return
-
-        if self.momentumX != 0 and stepX != 0:
-            # Snake cannot turn 180 degree, from left to right or right to left
-            return
-
-        if self.momentumY != 0 and stepY != 0:
-            # Snake cannot turn 180 degree, from up to down or down to up
-            return
-
-        self.momentumX = stepX
-        self.momentumY = stepY
-
-        # self.move()
-
-    # def moveLeft(self):
-    #     self.changeDirection(-self.block, 0)
-
-    # def moveRight(self):
-    #     self.changeDirection(self.block, 0)
-
-    # def moveUp(self):
-    #     self.changeDirection(0, -self.block)
-
-    # def moveDown(self):
-    #     self.changeDirection(0, self.block)
+        self.updateState(foodX, foodY)
 
     def increaseSize(self):
         self.size += 1
