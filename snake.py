@@ -1,6 +1,3 @@
-
-import pygame as pg
-
 import random
 import constains
 
@@ -21,10 +18,22 @@ class Snake:
 
     hasDead = False
 
-    def __init__(self):
+    # def __init__(self):
+
+    def init(self):
         self.headX = 0
         self.headY = 0
         self.size = 1
+        self.tails = []
+
+        self.momentumX = 0
+        self.momentumY = 0
+
+        self.hasDead = False
+        self.hasHitApple = False
+        self.hasHitTail = False
+
+        
 
     def randomPosition(self):
       # Let's say the board width is 1000, and the width of the snake is 50
@@ -40,10 +49,9 @@ class Snake:
         self.hasHitApple = self.hitTheFood(foodX, foodY)
 
         self.hasDead = self.hasHitWall or self.hasHitTail
-      
+
         if self.hasHitApple:
             self.increaseSize()
-
 
     def move(self):
 
@@ -129,11 +137,3 @@ class Snake:
             return True
 
         return False
-
-
-def drawSnake(display, snakes):
-    for snake in snakes:
-        pg.draw.rect(display, constains.SNAKE_COLOR, [
-                     snake[0]*constains.CELL_SIZE, snake[1] *
-                     constains.CELL_SIZE,
-                     constains.CELL_SIZE, constains.CELL_SIZE])
